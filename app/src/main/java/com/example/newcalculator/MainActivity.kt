@@ -11,19 +11,25 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //val clearBtn:Button = findViewById(R.id.clear)
+        val clearBtn:Button = findViewById(R.id.clear)
+        val editTextInput = findViewById<EditText>(R.id.ET1)
+/*
+        clearBtn.setOnLongClickListener {
+            firstOperand = ""
+            editTextInput.setText(firstOperand)
+
+        }*/
     }
     /*      ###     STATE       ###*/
     private var op:String = ""
     private var firstOperand:String = ""
+    private var onDecimal:Boolean = false
+    private var onOperatorEntered:Boolean = false
+    private var onNumberPressed:Boolean = false
 
 
     /*      ###     METHODS     ####*/
-    /*
-    *       TODO
-    *        1- a number cant contain two decimal points
-    *        2- toggle negation
-    * */
+
     fun onClickNumber(v : View){
         val editText = findViewById<EditText>(R.id.ET1)
         val clickedBtn: Button = v as Button
@@ -61,19 +67,23 @@ class MainActivity : AppCompatActivity() {
                 defaultStr += "9"
             }
             R.id.point ->{
-                defaultStr += "."
+                if(!onDecimal){
+                    defaultStr += "."
+                    onDecimal = true
+                }
             }
             R.id.negate ->{
-                defaultStr = "-$defaultStr"
+                if(defaultStr.first()=='-'){
+                    defaultStr = defaultStr.drop(1)
+                }else{
+                    defaultStr = "-$defaultStr"
+                }
             }
         }
         editText.setText(defaultStr)
+        onNumberPressed = true
     }
 
-    /*
-    *       TODO
-    *        implement percentage
-    * */
     fun onEval(v : View){
         var result:Double = 0.0
         val editText = findViewById<EditText>(R.id.ET1)
@@ -83,47 +93,48 @@ class MainActivity : AppCompatActivity() {
             "-"->{result = firstOperand.toDouble() - secondOperand.toDouble()}
             "/"->{result = firstOperand.toDouble() / secondOperand.toDouble()}
             "*"->{result = firstOperand.toDouble() * secondOperand.toDouble()}
+            "%"->{result = firstOperand.toDouble() % secondOperand.toDouble()}
         }
         editText.setText("$result")
+        onOperatorEntered = false
+        onDecimal = false
+        //onNumberPressed = false
     }
 
-    /*
-    *       TODO
-    *        *cannot contain 2 operators
-    * */
     fun onOperate(v : View){
         val editText = findViewById<EditText>(R.id.ET1)
         val btnClicked:Button = v as Button
-        when(btnClicked.id){
-            R.id.buttonDivide ->{
-                op = "/"
+        if(onOperatorEntered || !onNumberPressed){
+            return
+        }else{
+            when(btnClicked.id){
+                R.id.buttonDivide ->{
+                    op = "/"
+                }
+                R.id.buttonAdd ->{
+                    op = "+"
+                }
+                R.id.buttonSub ->{
+                    op = "-"
+                }
+                R.id.buttonMul ->{
+                    op = "*"
+                }
+                R.id.percent ->{
+                    op = "%"
+                }
             }
-            R.id.buttonAdd ->{
-                op = "+"
-            }
-            R.id.buttonSub ->{
-                op = "-"
-            }
-            R.id.buttonMul ->{
-                op = "*"
-            }
-            R.id.percent ->{
-                op = "%"
-            }
+            firstOperand = editText.text.toString()
+            editText.setText("")
+            onOperatorEntered = true
+            onDecimal = false
         }
-        firstOperand = editText.text.toString()
-        editText.setText("")
     }
 
     /*
     *       TODO
     *        implement onLongPress
     * */
-    fun onClear(v : View){
-        val editTextInput = findViewById<EditText>(R.id.ET1)
-        firstOperand = ""
-        editTextInput.setText("")
-    }
 
     fun onDelete(v : View){
         val editTextInput = findViewById<EditText>(R.id.ET1)
