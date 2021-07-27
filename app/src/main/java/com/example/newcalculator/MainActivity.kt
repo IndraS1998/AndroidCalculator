@@ -13,12 +13,15 @@ class MainActivity : AppCompatActivity() {
 
         val clearBtn:Button = findViewById(R.id.clear)
         val editTextInput = findViewById<EditText>(R.id.ET1)
-/*
+
         clearBtn.setOnLongClickListener {
             firstOperand = ""
             editTextInput.setText(firstOperand)
-
-        }*/
+            onDecimal = false
+            onOperatorEntered = false
+            onNumberPressed = false
+            true
+        }
     }
     /*      ###     STATE       ###*/
     private var op:String = ""
@@ -130,11 +133,6 @@ class MainActivity : AppCompatActivity() {
             onDecimal = false
         }
     }
-
-    /*
-    *       TODO
-    *        implement onLongPress
-    * */
 
     fun onDelete(v : View){
         val editTextInput = findViewById<EditText>(R.id.ET1)
